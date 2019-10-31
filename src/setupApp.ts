@@ -6,7 +6,10 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 export default function setupApp(app: NestFastifyApplication) {
   const options = new DocumentBuilder()
     .setTitle('Forall API')
-    .setDescription('Forall API Descriptions')
+    .setDescription(
+      `Forall API allows users to upload formality modules while
+      ensuring it's validity and typesafety`.replace('\n', ''),
+    )
     .setVersion('1.0')
     .build();
 
