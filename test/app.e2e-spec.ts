@@ -1,13 +1,13 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import {
   FastifyAdapter,
   NestFastifyApplication,
-} from '@nestjs/platform-fastify';
-import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
-import setupApp from '../src/setupApp';
+} from "@nestjs/platform-fastify";
+import { Test, TestingModule } from "@nestjs/testing";
+import * as request from "supertest";
+import { AppModule } from "../src/app.module";
+import setupApp from "../src/setupApp";
 
-describe('End To End', () => {
+describe("End To End", () => {
   let app: NestFastifyApplication;
 
   beforeEach(async () => {
@@ -29,21 +29,21 @@ describe('End To End', () => {
       .ready();
   });
 
-  describe('/uploads (POST)', () => {
-    it('works as expected', () => {
+  describe("/uploads (POST)", () => {
+    it("works as expected", () => {
       return request(app.getHttpServer())
-        .post('/uploads')
-        .set('Content-Type', 'application/json')
-        .send({ code: 'w 1', name: 'W' })
+        .post("/uploads")
+        .set("Content-Type", "application/json")
+        .send({ code: "w 1", name: "W" })
         .expect(202)
-        .expect('Location', /^\/uploads\/[a-z0-9\-]+/)
-        .expect('');
+        .expect("Location", /^\/uploads\/[a-z0-9\-]+/)
+        .expect("");
     });
 
-    it('Validates the body', () => {
+    it("Validates the body", () => {
       return request(app.getHttpServer())
-        .post('/uploads')
-        .set('Content-Type', 'application/json')
+        .post("/uploads")
+        .set("Content-Type", "application/json")
         .send({ code: 1 })
         .expect(400);
     });

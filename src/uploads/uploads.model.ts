@@ -1,22 +1,22 @@
-import { ApiModelProperty } from '@nestjs/swagger';
-import { IsNotEmpty, MinLength } from 'class-validator';
+import { ApiModelProperty } from "@nestjs/swagger";
+import { IsNotEmpty, MinLength } from "class-validator";
 
 export class CreateUploadRequest {
   @ApiModelProperty()
   @IsNotEmpty()
   @MinLength(1)
-  code: string;
+  public code: string;
 
   @ApiModelProperty()
   @IsNotEmpty()
   @MinLength(1)
-  name: string;
+  public name: string;
 }
 
 export class Upload {
-  @ApiModelProperty({ format: 'uuid' })
-  id: string;
+  @ApiModelProperty({ format: "uuid" })
+  public id: string;
 
-  @ApiModelProperty({ example: 'MyModule@0' })
-  full_name: string;
+  @ApiModelProperty({ example: "MyModule@0" })
+  public full_name: string;
 }
