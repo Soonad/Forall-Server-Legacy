@@ -14,23 +14,15 @@ task:
       test_script: npm test
       e2e_test_script: npm run test:e2e
 
-task:
-  container:
-    image: docker:latest
-  matrix:
-    - name: Build Docker Image
-      build_script: docker build -t moonad/forall-server:latest .
-      depends_on:
-        - Typecheck
-        - Lint
-        - Test
-    - name: Publish
-      environment:
-        DOCKER_TOKEN: ENCRYPTED[ed0a2d6d1d1b184a4c424f8485d21a938a92b8aeb607de05a50bea2a0e07eedd5c45f02594d073409c47371a7f0f89cb]
-        DOCKER_USER: ENCRYPTED[876aa6e366dbec45c680ed5dd112b009bdcace5dd32599c29aa4a370e9dff0c8456ba57d438fb859863cebff3bbbf0b3]
-      only_if: $CIRRUS_REPO_OWNER == 'moonad'
-      publish_script:
-        - echo $DOCKER_TOKEN | docker login --username $DOCKER_PASSWORD --password-stdin
-        - docker push moonad/forall-server:latest
-      depends_on:
-        - Build Docker Image
+docker_builder:
+  only_if: $CIRRUS_REPO_OWNER == 'moonad'
+  depends_on:
+    - Typecheck
+    - Lint
+    - Test
+  env:
+    DOCKER_PASSWORD: ENCRYPTED[ed0a2d6d1d1b184a4c424f8485d21a938a92b8aeb607de05a50bea2a0e07eedd5c45f02594d073409c47371a7f0f89cb]
+    DOCKER_USERNAME: ENCRYPTED[876aa6e366dbec45c680ed5dd112b009bdcace5dd32599c29aa4a370e9dff0c8456ba57d438fb859863cebff3bbbf0b3]
+  build_script: docker build --tag moonad/forall-server:latest .
+  login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+  push_script: docker push moonad/forall-server:latest
