@@ -39,3 +39,4 @@ README.md
 .gitignore
 .dockerignore
 docker-compose.yml
+.circle.yml
