@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
-import { UploadsModule } from './uploads/uploads.module';
-import { ModulesModule } from './modules/modules.module';
-import { CodesModule } from './codes/codes.module';
+import { Module } from "@nestjs/common";
+import { CodesModule } from "./codes/codes.module";
+import { ModulesModule } from "./modules/modules.module";
+import { UploadsModule } from "./uploads/uploads.module";
 
 @Module({
   imports: [UploadsModule, ModulesModule, CodesModule],

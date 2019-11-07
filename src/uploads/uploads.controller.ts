@@ -1,62 +1,62 @@
 import {
-  Controller,
-  Post,
-  Res,
-  HttpStatus,
   Body,
+  Controller,
   Get,
+  HttpStatus,
+  Post,
   Query,
-} from '@nestjs/common';
-import { FastifyReply } from 'fastify';
-import { ServerResponse } from 'http';
+  Res,
+} from "@nestjs/common";
 import {
-  ApiModelProperty,
-  ApiUseTags,
   ApiAcceptedResponse,
-  ApiOkResponse,
-  ApiNotFoundResponse,
   ApiBadRequestResponse,
-} from '@nestjs/swagger';
-import { IsUUID } from 'class-validator';
-import { CreateUploadRequest, Upload } from './uploads.model';
-import { v4 as genUUIDV4 } from 'node-uuid';
+  ApiModelProperty,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiUseTags,
+} from "@nestjs/swagger";
+import { IsUUID } from "class-validator";
+import { FastifyReply } from "fastify";
+import { ServerResponse } from "http";
+import { v4 as genUUIDV4 } from "node-uuid";
+import { CreateUploadRequest, Upload } from "./uploads.model";
 
 class GetUploadParams {
-  @IsUUID('4')
-  @ApiModelProperty({ format: 'uuid' })
-  id: string;
+  @IsUUID("4")
+  @ApiModelProperty({ format: "uuid" })
+  public id: string;
 }
 
-@ApiUseTags('uploads')
-@Controller('uploads')
+@ApiUseTags("uploads")
+@Controller("uploads")
 export class UploadsController {
-  @Post('/')
+  @Post("/")
   @ApiAcceptedResponse({
-    description: 'Upload was accepted and will be processed asyncronously.',
+    description: "Upload was accepted and will be processed asyncronously.",
   })
-  @ApiBadRequestResponse({ description: 'Invalid parameters.' })
-  async createUpload(
+  @ApiBadRequestResponse({ description: "Invalid parameters." })
+  public async createUpload(
     @Body() body: CreateUploadRequest,
     @Res() res: FastifyReply<ServerResponse>,
   ) {
     res
-      .header('Location', `/uploads/${genUUIDV4()}`)
+      .header("Location", `/uploads/${genUUIDV4()}`)
       .status(HttpStatus.ACCEPTED)
       .send();
   }
 
-  @Get('/:id')
+  @Get("/:id")
   @ApiOkResponse({
     type: Upload,
-    description: 'Upload was found and processed correctly.',
+    description: "Upload was found and processed correctly.",
   })
   @ApiNotFoundResponse({
     description: "Upload is still processing or doesn't exist.",
   })
-  @ApiBadRequestResponse({ description: 'Invalid parameters.' })
-  getUpload(@Query() { id }: GetUploadParams): Upload {
-    let upload = new Upload();
-    upload.full_name = 'MyModule@0';
+  @ApiBadRequestResponse({ description: "Invalid parameters." })
+  public getUpload(@Query() { id }: GetUploadParams): Upload {
+    const upload = new Upload();
+    upload.full_name = "MyModule@0";
     upload.id = id;
     return upload;
   }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 
 export interface ICreateUploadRequest {
   code: string;
@@ -7,5 +7,5 @@ export interface ICreateUploadRequest {
 
 @Injectable()
 export class UploadsService {
-  async createUpload() {}
+  public async createUpload() {}
 }
