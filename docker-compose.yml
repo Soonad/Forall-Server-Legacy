@@ -1,7 +1,10 @@
 version: '3'
 services:
-  web:
-    image: forall-server
-    build: .
+  db:
+    image: 'postgres:11-alpine'
     ports:
-    - "3000:3000"
+    - "5432:5432"
+    environment:
+    - POSTGRES_USER=forall
+    - POSTGRES_PASSWORD=forall
+    - POSTGRES_DB=forall-dev

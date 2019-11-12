@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  NotFoundException,
   Post,
   Query,
   Res,
@@ -16,10 +17,9 @@ import {
   ApiUseTags,
 } from "@nestjs/swagger";
 import { IsUUID } from "class-validator";
-import { FastifyReply } from "fastify";
-import { ServerResponse } from "http";
-import { v4 as genUUIDV4 } from "node-uuid";
+import { HttpResponse } from "../http-response.interceptor";
 import { CreateUploadRequest, Upload } from "./uploads.model";
+import { UploadsService } from "./uploads.service";
 
 class GetUploadParams {
   @IsUUID("4")
@@ -30,19 +30,22 @@ class GetUploadParams {
 @ApiUseTags("uploads")
 @Controller("uploads")
 export class UploadsController {
+  constructor(private readonly service: UploadsService) {}
+
   @Post("/")
   @ApiAcceptedResponse({
     description: "Upload was accepted and will be processed asyncronously.",
   })
   @ApiBadRequestResponse({ description: "Invalid parameters." })
-  public async createUpload(
-    @Body() body: CreateUploadRequest,
-    @Res() res: FastifyReply<ServerResponse>,
-  ) {
-    res
-      .header("Location", `/uploads/${genUUIDV4()}`)
-      .status(HttpStatus.ACCEPTED)
-      .send();
+  public async createUpload(@Body() body: CreateUploadRequest) {
+    const id = await this.service.createUpload(body);
+
+    return new HttpResponse(undefined, {
+      headers: {
+        Location: `/uploads/${id}`,
+      },
+      status: 202,
+    });
   }
 
   @Get("/:id")
@@ -54,10 +57,9 @@ export class UploadsController {
     description: "Upload is still processing or doesn't exist.",
   })
   @ApiBadRequestResponse({ description: "Invalid parameters." })
-  public getUpload(@Query() { id }: GetUploadParams): Upload {
-    const upload = new Upload();
-    upload.full_name = "MyModule@0";
-    upload.id = id;
+  public async getUpload(@Query() { id }: GetUploadParams): Promise<Upload> {
+    const upload = await this.service.getProcessedUpload(id);
+    if (!upload) { throw new NotFoundException(); }
     return upload;
   }
 }

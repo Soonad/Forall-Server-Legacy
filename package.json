@@ -26,15 +26,16 @@
     "@nestjs/core": "^6.7.2",
     "@nestjs/platform-fastify": "^6.8.5",
     "@nestjs/swagger": "^3.1.0",
-    "abstract-blob-store": "^3.3.5",
+    "@nestjs/typeorm": "^6.2.0",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.10.2",
     "fastify-swagger": "^2.4.0",
-    "fs-blob-store": "^5.2.1",
     "node-uuid": "^1.4.8",
+    "pg": "^7.12.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
-    "rxjs": "^6.5.3"
+    "rxjs": "^6.5.3",
+    "typeorm": "^0.2.20"
   },
   "devDependencies": {
     "@nestjs/cli": "^6.9.0",

@@ -11,7 +11,10 @@ This app is built with [Nest](https://github.com/nestjs/nest) framework.
 ## Running with Docker
 
 If you do not want to configure node and everything, you can run the service in prod mode with
-docker by running `docker-compose up -d`. That will start everything in background and you can check the docs for the API on `http://localhost:3000/apidoc`
+docker by running `docker-compose up -f docker-compose.yml -f docker-compose.full.yml -d`.
+
+That will start everything in background and you can check the docs for the API on
+`http://localhost:3000/apidoc`
 
 ## Installation
 

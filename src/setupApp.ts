@@ -1,6 +1,7 @@
 import { ValidationPipe } from "@nestjs/common";
 import { NestFastifyApplication } from "@nestjs/platform-fastify";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { HttpResponseInterceptor } from "./http-response.interceptor";
 
 // Mount all pipelines and global configs of the app.
 export default function setupApp(app: NestFastifyApplication) {
@@ -16,6 +17,7 @@ export default function setupApp(app: NestFastifyApplication) {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup("apidoc", app, document);
 
+  app.useGlobalInterceptors(new HttpResponseInterceptor());
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
