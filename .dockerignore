@@ -40,3 +40,6 @@ README.md
 .dockerignore
 docker-compose.yml
 .circle.yml
+
+# Do not load default env variables to docker image
+.env
