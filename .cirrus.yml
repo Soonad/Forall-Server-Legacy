@@ -1,6 +1,14 @@
 task:
   container:
     image: node:latest
+    additional_containers:
+      - name: postgres
+        image: postgres:11-alpine
+        port: 5432
+        env:
+          POSTGRES_USER: forall
+          POSTGRES_PASSWORD: forall
+          POSTGRES_DB: forall-dev
   node_modules_cache:
     folder: node_modules
     fingerprint_script: cat package-lock.json
@@ -11,14 +19,6 @@ task:
     - name: Lint
       lint_script: npm run lint
     - name: Test
-      additional_containers:
-        - name: postgres
-          image: postgres:11-alpine
-          port: 5432
-          env:
-            POSTGRES_USER: forall
-            POSTGRES_PASSWORD: forall
-            POSTGRES_DB: forall-dev
       test_script: npm test
       e2e_test_script: npm run test:e2e
 
