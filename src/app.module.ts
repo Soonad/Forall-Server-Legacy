@@ -1,5 +1,7 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { ConfigModule, ConfigService } from "nestjs-config";
+import * as path from "path";
 import { CodesModule } from "./codes/codes.module";
 import { ModulesModule } from "./modules/modules.module";
 import { Upload } from "./uploads/uploads.model";
@@ -10,13 +12,17 @@ import { UploadsModule } from "./uploads/uploads.module";
     UploadsModule,
     ModulesModule,
     CodesModule,
-    TypeOrmModule.forRoot({
-      type: "postgres",
-      url: "postgres://forall:forall@localhost:5432/forall-dev",
-      synchronize: true,
-      entities: [Upload],
-      keepConnectionAlive: true,
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: "postgres",
+        url: config.get("database.url"),
+        synchronize: true, // We need to change to false once we are in production.
+        entities: [Upload],
+        keepConnectionAlive: config.get("database.keepConnectionAlive"),
+      }),
     }),
+    ConfigModule.load(path.resolve(__dirname, "config", "**/!(*.d).{ts,js}")),
   ],
   controllers: [],
   providers: [],

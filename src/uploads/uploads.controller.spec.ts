@@ -1,17 +1,15 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import {
-  FileStoreService,
-  MemFileStore,
-} from "../file-store/file-store.service";
+import { FileStoreService } from "../file-store/file-store.service";
+import { InMemoryFileStoreService } from "../file-store/in-memory-file-store/in-memory-file-store.service";
 import { UploadsController } from "./uploads.controller";
-import { ICreateUploadRequest, UploadsService } from "./uploads.service";
+import { UploadsService } from "./uploads.service";
 
 describe("Uploads Controller", () => {
   let controller: UploadsController;
-  let memStore: MemFileStore;
+  let memStore: InMemoryFileStoreService;
 
   beforeEach(async () => {
-    memStore = new MemFileStore();
+    memStore = new InMemoryFileStoreService();
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UploadsController],
       providers: [

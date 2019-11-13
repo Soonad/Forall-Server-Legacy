@@ -2,21 +2,19 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { v4 as genUUID } from "node-uuid";
 import { DeepPartial, EntityRepository, Repository } from "typeorm";
-import {
-  FileStoreService,
-  MemFileStore,
-} from "../file-store/file-store.service";
+import { FileStoreService } from "../file-store/file-store.service";
+import { InMemoryFileStoreService } from "../file-store/in-memory-file-store/in-memory-file-store.service";
 import { Upload } from "./uploads.model";
 import { ICreateUploadRequest, UploadsService } from "./uploads.service";
 
 describe("UploadsService", () => {
   let service: UploadsService;
-  let memStore: MemFileStore;
+  let memStore: InMemoryFileStoreService;
   let repo: Repository<Upload>;
   let upload: Upload;
 
   beforeEach(async () => {
-    memStore = new MemFileStore();
+    memStore = new InMemoryFileStoreService();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
