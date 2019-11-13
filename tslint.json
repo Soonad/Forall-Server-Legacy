@@ -34,6 +34,7 @@
       "jsdoc-format": [true, "check-multiline-start"],
       "valid-typeof": true,
       "early-exit": { "severity": "warning" },
+      "quotemark": [true, "double", "avoid-escape", "avoid-template"],
       "no-collapsible-if": { "severity": "warning" },
       "no-unnecessary-else": { "severity": "warning" },
       "no-accessor-recursion": { "severity": "warning" },

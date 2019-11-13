@@ -59,7 +59,9 @@ export class UploadsController {
   @ApiBadRequestResponse({ description: "Invalid parameters." })
   public async getUpload(@Query() { id }: GetUploadParams): Promise<Upload> {
     const upload = await this.service.getProcessedUpload(id);
-    if (!upload) { throw new NotFoundException(); }
+    if (!upload) {
+      throw new NotFoundException();
+    }
     return upload;
   }
 }

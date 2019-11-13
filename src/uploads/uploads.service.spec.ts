@@ -48,7 +48,7 @@ describe("UploadsService", () => {
 
     beforeEach(async () => {
       req = {
-        code: `w : Word 1`,
+        code: "w : Word 1",
         name: "MyMod",
       };
 
