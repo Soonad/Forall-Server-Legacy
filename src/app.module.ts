@@ -3,6 +3,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "nestjs-config";
 import * as path from "path";
 import { CodesModule } from "./codes/codes.module";
+import { FormalityModule } from "./formality/formality.module";
 import { ModulesModule } from "./modules/modules.module";
 import { Upload } from "./uploads/uploads.model";
 import { UploadsModule } from "./uploads/uploads.module";

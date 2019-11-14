@@ -8,3 +8,17 @@ services:
     - POSTGRES_USER=forall
     - POSTGRES_PASSWORD=forall
     - POSTGRES_DB=forall-dev
+  redis:
+    image: 'redis:5-alpine'
+    ports:
+    - "6379:6379"
+    expose:
+    - 6379
+  arena:
+    image: 'mixmaxhq/arena:latest'
+    links:
+      - "redis"
+    ports:
+      - "4567:4567"
+    volumes:
+      - ./docker/arena.json:/opt/arena/src/server/config/index.json

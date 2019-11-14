@@ -1,9 +1,12 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
+import * as Bull from "bull";
+import { getQueueToken } from "nest-bull";
 import { v4 as genUUID } from "node-uuid";
-import { DeepPartial, EntityRepository, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { FileStoreService } from "../file-store/file-store.service";
 import { InMemoryFileStoreService } from "../file-store/in-memory-file-store/in-memory-file-store.service";
+import { CHECK_JOB, UPLOADS_QUEUE } from "./uploads.constants";
 import { Upload } from "./uploads.model";
 import { ICreateUploadRequest, UploadsService } from "./uploads.service";
 
@@ -12,26 +15,32 @@ describe("UploadsService", () => {
   let memStore: InMemoryFileStoreService;
   let repo: Repository<Upload>;
   let upload: Upload;
+  let queue: Bull.Queue;
 
   beforeEach(async () => {
-    memStore = new InMemoryFileStoreService();
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UploadsService,
         {
           provide: FileStoreService,
-          useValue: memStore,
+          useClass: InMemoryFileStoreService,
         },
         {
           provide: getRepositoryToken(Upload),
           useClass: Repository,
         },
+        {
+          provide: getQueueToken(UPLOADS_QUEUE),
+          useClass: Bull,
+        },
       ],
     }).compile();
 
-    service = module.get<UploadsService>(UploadsService);
-    repo = module.get<Repository<Upload>>(getRepositoryToken(Upload));
+    service = module.get(UploadsService);
+    repo = module.get(getRepositoryToken(Upload));
+    queue = module.get(getQueueToken(UPLOADS_QUEUE));
+    memStore = module.get(FileStoreService);
+
     upload = new Upload();
     upload.id = genUUID();
     upload.name = "MyMod";
@@ -52,6 +61,7 @@ describe("UploadsService", () => {
 
       jest.spyOn(repo, "create").mockReturnValue(upload);
       jest.spyOn(repo, "save").mockResolvedValue(upload);
+      jest.spyOn(queue, "add").mockResolvedValue({} as any);
     });
 
     it("should create upload on repository and return its id", async () => {
@@ -68,6 +78,14 @@ describe("UploadsService", () => {
       expect(key).toBeDefined();
       expect(memStore.files[key]).toEqual(req.code);
     });
+
+    it("should add a job to process the upload", async () => {
+      await service.createUpload(req);
+
+      expect(jest.spyOn(queue, "add")).toBeCalledWith(CHECK_JOB, {
+        id: upload.id,
+      });
+    });
   });
 
   describe("getProcessedUpload", () => {
@@ -79,7 +97,7 @@ describe("UploadsService", () => {
 
     it("should just pass the id to repository", async () => {
       await service.getProcessedUpload(upload.id);
-      expect(findOneSpy.mock.calls[0][0]).toEqual(upload.id);
+      expect(findOneSpy).toBeCalledWith(upload.id);
     });
 
     it("should return null if no upload exist", async () => {

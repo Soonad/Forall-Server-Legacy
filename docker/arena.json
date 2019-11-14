@@ -1,0 +1,9 @@
+{
+  "queues": [
+    {
+      "url": "redis://redis:6379/0",
+      "name": "UPLOADS_QUEUE",
+      "hostId": "Docker"
+    }
+  ]
+}

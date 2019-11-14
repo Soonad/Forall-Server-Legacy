@@ -1,7 +1,12 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Queue } from "bull";
+import { InjectQueue } from "nest-bull";
 import { Repository } from "typeorm";
+
 import { FileStoreService } from "../file-store/file-store.service";
+
+import { CHECK_JOB, UPLOADS_QUEUE } from "./uploads.constants";
 import { Upload } from "./uploads.model";
 
 export interface ICreateUploadRequest {
@@ -13,6 +18,7 @@ export interface ICreateUploadRequest {
 export class UploadsService {
   constructor(
     @InjectRepository(Upload) private readonly repository: Repository<Upload>,
+    @InjectQueue(UPLOADS_QUEUE) private readonly queue: Queue,
     private readonly fileStore: FileStoreService,
   ) {}
 
@@ -27,9 +33,14 @@ export class UploadsService {
     code,
   }: ICreateUploadRequest): Promise<string> {
     const upload = this.repository.create({ name });
+
     await this.repository.save(upload);
-    await this.fileStore.persist(`${upload.id}/${name}.fm`, code);
-    return upload.id;
+
+    const { id } = upload;
+
+    await this.fileStore.persist(upload.fileStoreKey, code);
+    await this.queue.add(CHECK_JOB, { id });
+    return id;
   }
 
   /**

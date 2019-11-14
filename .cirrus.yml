@@ -9,6 +9,9 @@ task:
           POSTGRES_USER: forall
           POSTGRES_PASSWORD: forall
           POSTGRES_DB: forall-dev
+      - name: redis
+        image: redis:5-alpine
+        port: 6379
   node_modules_cache:
     folder: node_modules
     fingerprint_script: cat package-lock.json

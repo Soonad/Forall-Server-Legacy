@@ -1,5 +1,5 @@
 import { ApiModelProperty } from "@nestjs/swagger";
-import { IsNotEmpty, MinLength } from "class-validator";
+import { IsNotEmpty, Matches, MinLength } from "class-validator";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { ICreateUploadRequest } from "./uploads.service";
 
@@ -12,6 +12,7 @@ export class CreateUploadRequest implements ICreateUploadRequest {
   @ApiModelProperty()
   @IsNotEmpty()
   @MinLength(1)
+  @Matches(/^[a-zA-Z0-9-_]+(\.[a-zA-Z0-9-_]+)*$/)
   public name: string;
 }
 
@@ -19,7 +20,7 @@ export class CreateUploadRequest implements ICreateUploadRequest {
 export class Upload {
   @ApiModelProperty({ format: "uuid" })
   @PrimaryGeneratedColumn("uuid")
-  public id: string;
+  public id: string | null;
 
   @ApiModelProperty({ example: "MyModule" })
   @Column()
@@ -28,4 +29,10 @@ export class Upload {
   @ApiModelProperty({ example: "0" })
   @Column({ nullable: true })
   public version?: string;
+
+  get fileStoreKey(): string | null {
+    if (!this.id) { return null; }
+
+    return `${this.id}/${this.name}.fm`;
+  }
 }
